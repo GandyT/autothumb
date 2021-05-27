@@ -18,8 +18,9 @@ const InputReader = require("./modules/InputReader.js");
 
     // cut out character
     // find a more efficient way of scanning pixels
+
     var found = false;
-    for (let wI = 1; wI <= characterIMG.getWidth(); ++wI) {
+    for (let wI = 1; wI <= characterIMG.getWidth(); wI += 3) {
         var columnContainsPixel = false;
         for (let hI = 1; hI <= characterIMG.getHeight(); ++hI) {
             if (characterIMG.getPixelColor(wI, hI)) {
@@ -50,8 +51,6 @@ const InputReader = require("./modules/InputReader.js");
     }
 
     await characterIMG.quality(100);
-    await characterIMG.write(`./io/output/${fileName.split(".")[0]}.jpg`);
-
-
+    await characterIMG.write(`./io/output/${fileName.split(".")[0]}.png`);
 })();
 
