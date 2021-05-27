@@ -3,6 +3,8 @@ const InputReader = require("./modules/InputReader.js");
 const CharacterModifier = require("./modules/CharacterModifier.js");
 const Options = require("./resource/options.json");
 
+const text = "BEDWARS GAMEPLAY";
+
 (async () => {
     const characters = await InputReader.getCharacters();
     const backgrounds = await InputReader.getBackgrounds();
@@ -42,13 +44,45 @@ const Options = require("./resource/options.json");
     await bgIMG.composite(bgCrop, Options.BACKGROUND.BORDER_WIDTH, Options.BACKGROUND.BORDER_WIDTH);
 
     console.log(`Compositing ${charFileName} on ${bgFileName}`);
+    console.log(`Writing Text on ${bgFileName}`);
+
+    /* WRITING MESSAGES */
+    const FONT = await Jimp.loadFont(Jimp.FONT_SANS_128_WHITE);
+    const freeWidth = bgIMG.getWidth() - characterIMG.getWidth() * 1.5 - (Options.BACKGROUND.BORDER_WIDTH * 2);
+    const charSize = await Jimp.measureText(FONT, "a");
+    const charHeight = await Jimp.measureTextHeight(FONT, "A");
+    const charPerLine = freeWidth / charSize;
+    var count = 0;
+    var str = "";
+
+    text.split(" ").forEach((s, i) => {
+        count += s.length + 1;
+        if (count > charPerLine) {
+            str += `\n${s}`;
+            count = 0;
+        } else {
+            if (i != 0) str += " ";
+            str += s;
+        }
+    });
+
+    const startY = bgIMG.getHeight() / 2 - ((text.split(" ").length * charHeight) / 2);
+
     /* FIGURE OUT WHICH WAY CHARACTER IS FACING */
     if (characterIMG.getPixelColor(cropPoints.topLeft[0], cropPoints.topLeft[1])) {
         // facing left
         await bgIMG.composite(characterIMG, bgIMG.getWidth() - (characterIMG.getWidth() * 1.5), (bgIMG.getHeight() / 2) - (characterIMG.getHeight() / 2));
+
+        await str.split("\n").forEach(async (s, i) => {
+            await bgIMG.print(FONT, Options.BACKGROUND.BORDER_WIDTH, charHeight * i + startY, s);
+        });
+
     } else {
         // facing right
         await bgIMG.composite(characterIMG, characterIMG.getWidth() * 0.5, (bgIMG.getHeight() / 2) - (characterIMG.getHeight() / 2));
+        await str.split("\n").forEach(async (s, i) => {
+            await bgIMG.print(FONT, characterIMG.getWidth() * 1.5, charHeight * i + startY, str);
+        });
     }
 
     bgIMG.write(`./io/output/${bgFileName.split(".")[0]}.png`);
