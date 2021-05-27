@@ -5,7 +5,8 @@
     },
     "CHARACTER": {
         "MAX_WIDTH": 1800,
-        "MAX_HEIGHT": 960
+        "MAX_HEIGHT": 960,
+        "OUTLINE_WIDTH": 20
     },
     "BACKGROUND": {
         "BORDER_WIDTH": 30

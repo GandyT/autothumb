@@ -26,6 +26,12 @@ const text = "BEDWARS GAMEPLAY";
     await characterIMG.crop(cropPoints.topLeft[0], cropPoints.topLeft[1], cropPoints.bottomRight[0] - cropPoints.topLeft[0], cropPoints.bottomRight[1] - cropPoints.topLeft[1]);
     await characterIMG.scale(scaleFactor);
 
+    console.log("Adding Character Border");
+    var characterSmaller = await Jimp.read(characterIMG);
+    await characterSmaller.resize(characterIMG.getWidth() - Options.CHARACTER.OUTLINE_WIDTH, characterIMG.getHeight() - Options.CHARACTER.OUTLINE_WIDTH);
+    await characterIMG.brightness(1);
+    await characterIMG.composite(characterSmaller, Options.CHARACTER.OUTLINE_WIDTH / 2, Options.CHARACTER.OUTLINE_WIDTH / 2);
+
     /* FIND BACKGROUND DIRECTION */
     const bgFileName = backgrounds[Math.floor(Math.random() * backgrounds.length)];
     var bgIMG = await Jimp.read(`./io/input/${bgFileName}`);
