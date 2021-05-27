@@ -14,15 +14,15 @@ const InputReader = require("./modules/InputReader.js");
     var characterIMG = await Jimp.read(`./io/input/${fileName}`);
 
     let topLeft = [characterIMG.getWidth(), characterIMG.getHeight()];
-    let bottomRight = [0, 0];
+    let bottomRight = [1, 1];
 
     // cut out character
     // find a more efficient way of scanning pixels
 
     var found = false;
-    for (let wI = 1; wI <= characterIMG.getWidth(); wI += 3) {
+    for (let wI = 1; wI <= characterIMG.getWidth(); wI += 1) {
         var columnContainsPixel = false;
-        for (let hI = 1; hI <= characterIMG.getHeight(); ++hI) {
+        for (let hI = bottomRight[1]; hI <= characterIMG.getHeight(); ++hI) {
             if (characterIMG.getPixelColor(wI, hI)) {
                 found = true;
                 columnContainsPixel = true;
