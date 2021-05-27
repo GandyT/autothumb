@@ -1,0 +1,2 @@
+# autothumb
+automatic thumbnail maker

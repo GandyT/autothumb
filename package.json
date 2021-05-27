@@ -1,0 +1,11 @@
+{
+  "name": "autothumb",
+  "version": "1.0.0",
+  "description": "automatic thumbnail maker",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Randy S",
+  "license": "ISC"
+}
