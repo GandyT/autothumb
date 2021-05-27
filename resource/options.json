@@ -1,0 +1,10 @@
+{
+    "OUTPUT": {
+        "OUTPUT_WIDTH": 1920,
+        "OUTPUT_HEIGHT": 1080
+    },
+    "CHARACTER": {
+        "MAX_WIDTH": 1800,
+        "MAX_HEIGHT": 960
+    }
+}
