@@ -1,6 +1,6 @@
 const Jimp = require("jimp");
-const Options = require("./resource/options.json");
 const InputReader = require("./modules/InputReader.js");
+const CharacterModifier = require("./modules/CharacterModifier.js");
 
 (async () => {
     const characters = await InputReader.getCharacters();
@@ -12,45 +12,11 @@ const InputReader = require("./modules/InputReader.js");
 
     const fileName = characters[Math.floor(Math.random() * characters.length)];
     var characterIMG = await Jimp.read(`./io/input/${fileName}`);
+    var cropPoints = await CharacterModifier.crop(characterIMG);
+    var scaleFactor = CharacterModifier.scale(characterIMG.getWidth(), characterIMG.getHeight());
 
-    let topLeft = [characterIMG.getWidth(), characterIMG.getHeight()];
-    let bottomRight = [1, 1];
-
-    // cut out character
-    // find a more efficient way of scanning pixels
-
-    var found = false;
-    for (let wI = 1; wI <= characterIMG.getWidth(); wI += 1) {
-        var columnContainsPixel = false;
-        for (let hI = bottomRight[1]; hI <= characterIMG.getHeight(); ++hI) {
-            if (characterIMG.getPixelColor(wI, hI)) {
-                found = true;
-                columnContainsPixel = true;
-                console.log(`COLORPIXEL - X: ${wI}, Y: ${hI}`)
-                if (wI < topLeft[0]) topLeft[0] = wI;
-                if (wI > bottomRight[0]) bottomRight[0] = wI;
-                if (hI < topLeft[1]) topLeft[1] = hI;
-                if (hI > bottomRight[1]) bottomRight[1] = hI;
-            }
-        }
-
-        if (found && !columnContainsPixel) break;
-    }
-
-    await characterIMG.crop(topLeft[0], topLeft[1], bottomRight[0] - topLeft[0], bottomRight[1] - topLeft[1]);
-
-    while (
-        characterIMG.getWidth() > Options.CHARACTER.MAX_WIDTH &&
-        characterIMG.getHeight() > Options.CHARACTER.MAX_HEIGHT
-    ) {
-        var heightDiff = characterIMG.getHeight() - Options.CHARACTER.MAX_HEIGHT;
-        var widthDiff = characterIMG.getWidth() - Options.CHARACTER.MAX_WIDTH;
-        var scale = widthDiff > heightDiff ? Options.CHARACTER.MAX_WIDTH / characterIMG.getWidth() : Options.CHARACTER.MAX_HEIGHT / characterIMG.getHeight();
-
-        await characterIMG.resize(characterIMG.getWidth() * scale, characterIMG.getHeight() * scale);
-    }
-
-    await characterIMG.quality(100);
+    await characterIMG.crop(cropPoints.topLeft[0], cropPoints.topLeft[1], cropPoints.bottomRight[0] - cropPoints.topLeft[0], cropPoints.bottomRight[1] - cropPoints.topLeft[1]);
+    await characterIMG.scale(scaleFactor);
     await characterIMG.write(`./io/output/${fileName.split(".")[0]}.png`);
 })();
 
