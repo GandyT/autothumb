@@ -6,5 +6,8 @@
     "CHARACTER": {
         "MAX_WIDTH": 1800,
         "MAX_HEIGHT": 960
+    },
+    "BACKGROUND": {
+        "BORDER_WIDTH": 30
     }
 }

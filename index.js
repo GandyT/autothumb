@@ -1,6 +1,7 @@
 const Jimp = require("jimp");
 const InputReader = require("./modules/InputReader.js");
 const CharacterModifier = require("./modules/CharacterModifier.js");
+const Options = require("./resource/options.json");
 
 (async () => {
     const characters = await InputReader.getCharacters();
@@ -26,9 +27,19 @@ const CharacterModifier = require("./modules/CharacterModifier.js");
     /* FIND BACKGROUND DIRECTION */
     const bgFileName = backgrounds[Math.floor(Math.random() * backgrounds.length)];
     var bgIMG = await Jimp.read(`./io/input/${bgFileName}`);
+    await bgIMG.crop(0, 0, 1920, 1080);
 
     console.log(`Applying Blur...`);
     await bgIMG.blur(4);
+
+    /* ADDING BORDER */
+    console.log("ADDING BORDER");
+    const bgCrop = await Jimp.read(bgIMG);
+    await bgCrop.crop(Options.BACKGROUND.BORDER_WIDTH, Options.BACKGROUND.BORDER_WIDTH, bgCrop.getWidth() - (Options.BACKGROUND.BORDER_WIDTH * 2), bgCrop.getHeight() - (Options.BACKGROUND.BORDER_WIDTH * 2));
+
+    await bgIMG.brightness(0.5);
+
+    await bgIMG.composite(bgCrop, Options.BACKGROUND.BORDER_WIDTH, Options.BACKGROUND.BORDER_WIDTH);
 
     console.log(`Compositing ${charFileName} on ${bgFileName}`);
     /* FIGURE OUT WHICH WAY CHARACTER IS FACING */
